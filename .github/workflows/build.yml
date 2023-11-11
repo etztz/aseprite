@@ -1,37 +1,71 @@
 name: build
+
 on: [push, pull_request]
+
 jobs:
+
   build:
+
     runs-on: ${{ matrix.os }}
+
     strategy:
+
       fail-fast: false
+
       matrix:
+
         os: [windows-latest]
+
         build_type: [Release]
+
         enable_ui: [on]
+
         include:
+
           - os: windows-latest
+
             build_type: Release
+
             enable_ui: on
+
     steps:
+
     - uses: actions/checkout@v3
+
       with:
+
         submodules: 'recursive'
+
     - name: ccache
+
       uses: hendrikmuhs/ccache-action@v1
+
       if: runner.os == 'Linux'
+
       with:
+
         key: ${{ matrix.os }}-${{ matrix.enable_ui }}
+
     - uses: seanmiddleditch/gha-setup-ninja@master
+
     - uses: ilammy/msvc-dev-cmd@v1
+
       if: runner.os == 'Windows'
+
     - name: Install Dependencies
+
       shell: bash
+
       run: |
+
         if [[ "${{ runner.os }}" == "Linux" ]] ; then
+
           sudo apt-get update -qq
+
           sudo apt-get install -y \
+
             libx11-dev libxcursor-dev libxi-dev
+
         fi
 
     - name: Generating Makefiles
@@ -72,12 +106,20 @@ jobs:
 
     - name: Compiling
 
-      shel: bash
+      shell: bash
+
       run: |
+
         cd build && ninja
+
     - uses: actions/upload-artifact@v3
+
       with:
+
         name: aseprite
+
         path: |
-          D:/a/aseprite/aseprite/build/bin/data
-          D:/a/aseprite/aseprite/build/bin/aseprite.exe
+
+          D:/a/aseprite/aseprite/build/bin/data
+
+          D:/a/aseprite/aseprite/build/bin/aseprite.exe 作者：独立游戏杂货铺 https://www.bilibili.com/read/cv27083106/ 出处：bilibili
